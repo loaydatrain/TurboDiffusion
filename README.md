@@ -4,10 +4,12 @@
 <img src=assets/TurboDiffusion_Logo.png width="30%"/>
 </div>
 
-This repository provides the official implementation of **TurboDiffusion**, a video generation acceleration framework that can speed up end-to-end diffusion generation by $100 \sim 205\times$ on a single RTX 5090, while maintaining video quality.
-
+This repository provides the official implementation of **TurboDiffusion**, a video generation acceleration framework that can speed up end-to-end diffusion generation by $100 \sim 205\times$ on a single RTX 5090, while maintaining video quality.   
+TurboDiffusion primarily uses [SageAttention](https://github.com/thu-ml/SageAttention), [SLA (Sparse-Linear Attention)](https://github.com/thu-ml/SLA) for attention acceleration, and [rCM](https://github.com/NVlabs/rcm) for timestep distillation.
 
 Paper: [TurboDiffusion: Accelerating Video Diffusion Models by 100--205 Times](https://jt-zhang.github.io/files/TurboDiffusion_Technical_Report.pdf)
+
+**Note**: the checkpoints and paper are not finalized, and will be updated later to improve quality and accuracy
 
 <div align="center">
 <img src="assets/TurboDiffusion_speedup.png" width="100%"/>
@@ -66,16 +68,16 @@ git submodule update --init --recursive
 pip install -e . --no-build-isolation
 ```
 
-To enable SageSLA (Sparse-Linear Attention based on SageAttention), install [SpargeAttn](https://github.com/thu-ml/SpargeAttn) first:
+To enable SageSLA, a fast SLA forward pass based on SageAttention, install [SpargeAttn](https://github.com/thu-ml/SpargeAttn) first:
 
 ```bash
 pip install git+https://github.com/thu-ml/SpargeAttn.git --no-build-isolation
 ```
 
 ## Inference
+For GPUs with more than 40GB of GPU memory, **e.g., H100, we recommend using the unquantized checkpoint (without `-quant`) and removing `--quant_linear` from the command.**
 
-
-1.  Download the Wan2.1 VAE and umT5 text encoder checkpoints from the official [Wan2.1](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B) repository on Huggingface:
+1.  Download the Wan2.1 VAE (**applicable for both Wan2.1 and Wan2.2**) and umT5 text encoder checkpoints from the official [Wan2.1](https://huggingface.co/Wan-AI/Wan2.1-T2V-1.3B) repository on Huggingface:
 
     ```bash
     mkdir checkpoints
@@ -95,15 +97,14 @@ pip install git+https://github.com/thu-ml/SpargeAttn.git --no-build-isolation
     wget https://huggingface.co/TurboDiffusion/TurboWan2.1-T2V-1.3B-480P/resolve/main/TurboWan2.1-T2V-1.3B-480P-quant.pth
     ```
     
-    For GPUs with a bigger GPU memory than 40GB, e.g., H100, we recommend using the unquantized checkpoint.
 
-    For the I2V model, download both the high-noise and low-noise checkpoints:
+    For the Wan2.2-I2V model, download both the high-noise and low-noise checkpoints:
     ```bash
     wget https://huggingface.co/TurboDiffusion/TurboWan2.2-I2V-A14B-720P/resolve/main/TurboWan2.2-I2V-A14B-high-720P.pth
     wget https://huggingface.co/TurboDiffusion/TurboWan2.2-I2V-A14B-720P/resolve/main/TurboWan2.2-I2V-A14B-low-720P.pth
     ```
 
-3.  Use the inference script for the T2V model:
+3.  Use the inference script for the **T2V** model:
     ```bash
     export PYTHONPATH=turbodiffusion
     
@@ -138,7 +139,7 @@ pip install git+https://github.com/thu-ml/SpargeAttn.git --no-build-isolation
         --sla_topk 0.1
     ```
 
-    Or the script for the I2V model:
+    Or the script for the **I2V** model:
     ```bash
     export PYTHONPATH=turbodiffusion
 
@@ -552,13 +553,13 @@ Please refer to `turbodiffusion/rcm/configs/experiments/sla/wan2pt1_t2v.py` for 
 
 #### Model Merging
 
-The parameter updates from SLA training can be merged into rCM checkpoints using `turbodiffusion/scripts/merge_models.py`, enabling rCM to perform sparse attention inference.
+The parameter updates from SLA training can be merged into rCM checkpoints using `turbodiffusion/scripts/merge_models.py`, enabling rCM to perform sparse attention inference. Specify `--base` as the rCM model, `--diff_base` as the pretrained model, and `--diff_target` as the SLA-tuned model.
 
 ## Roadmap
 
 We're actively working on the following features and improvements:
 
-- [ ] Organize and release training code
+- [x] Organize and release training code
 - [ ] Optimize infrastructure for better parallel
 - [ ] vLLM-Omni integration
 - [ ] Support for more video generation models
@@ -566,7 +567,7 @@ We're actively working on the following features and improvements:
 - [ ] More hardware-level operator optimizations
 
 
-We welcome community members to help maintain and extend TurboDiffusion. We appreciate your interest in contributing. Welcome to join the TurboDiffusion Team and contribute together!
+We welcome community members to help maintain and extend TurboDiffusion. Welcome to join the TurboDiffusion Team and contribute together!
 
 
 ## Citation
@@ -580,8 +581,8 @@ We welcome community members to help maintain and extend TurboDiffusion. We appr
 
 @software{turbodiffusion2025,
   title={TurboDiffusion: Accelerating Video Diffusion Models by 100--205 Times},
-  author       = {The TurboDiffusion Team},
-  url          = {https://github.com/thu-ml/TurboDiffusion},
+  author={The TurboDiffusion Team},
+  url={https://github.com/thu-ml/TurboDiffusion},
   year={2025}
 }
 

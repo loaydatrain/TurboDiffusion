@@ -41,7 +41,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument("--sigma_max", type=float, default=80, help="Initial sigma for rCM")
     parser.add_argument("--vae_path", type=str, default="checkpoints/Wan2.1_VAE.pth", help="Path to the Wan2.1 VAE")
     parser.add_argument("--text_encoder_path", type=str, default="checkpoints/models_t5_umt5-xxl-enc-bf16.pth", help="Path to the umT5 text encoder")
-    parser.add_argument("--num_frames", type=int, default=77, help="Number of frames to generate")
+    parser.add_argument("--num_frames", type=int, default=81, help="Number of frames to generate")
     parser.add_argument("--prompt", type=str, required=True, help="Text prompt for video generation")
     parser.add_argument("--resolution", default="480p", type=str, help="Resolution of the generated output")
     parser.add_argument("--aspect_ratio", default="16:9", type=str, help="Aspect ratio of the generated output (width:height)")
