@@ -114,7 +114,7 @@ WAN2PT1_1PT3B_RES480P_T2V: LazyDict = LazyDict(
                 tokenizer=dict(vae_pth="assets/checkpoints/Wan2.1_VAE.pth"),
                 text_encoder_path="assets/checkpoints/models_t5_umt5-xxl-enc-bf16.pth",
                 teacher_ckpt="assets/checkpoints/Wan2.1-T2V-1.3B.dcp/model",
-                neg_embed_path="assets/umT5_wan_negative_emb.pt",
+                neg_embed_path="assets/checkpoints/umT5_wan_negative_emb.pt",
                 teacher_guidance=5.0,
                 tangent_warmup=1000,
                 p_G=dict(
@@ -158,7 +158,7 @@ WAN2PT1_1PT3B_RES480P_T2V: LazyDict = LazyDict(
             context_parallel_size=1,
         ),
         dataloader_train=dict(
-            tar_path_pattern="assets/datasets/Wan2.1_14B_480p_16:9_Euler-step100_shift-3.0_cfg-5.0_seed-0_250K/shard_*.tar",
+            tar_path_pattern="assets/datasets/Wan2.1_14B_480p_16:9_Euler-step100_shift-3.0_cfg-5.0_seed-0_250K/shard*.tar",
             batch_size=1,
         ),
     ),
