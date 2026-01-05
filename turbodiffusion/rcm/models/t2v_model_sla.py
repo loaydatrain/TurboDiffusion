@@ -342,10 +342,10 @@ class T2VModel_SLA(ImaginaireModel):
 
         kendall_loss = self.loss_scale * ((net_output_B_C_T_H_W - teacher_output_B_C_T_H_W) ** 2).mean(dim=(1, 2, 3, 4))
         output_batch = {
-            "x0": x0_B_C_T_H_W,
-            "xt": xt_B_C_T_H_W,
-            "F_pred": net_output_B_C_T_H_W,
-            "teacher_F_pred": teacher_output_B_C_T_H_W,
+            "x0": x0_B_C_T_H_W.detach().cpu(),
+            "xt": xt_B_C_T_H_W.detach().cpu(),
+            "F_pred": net_output_B_C_T_H_W.detach().cpu(),
+            "teacher_F_pred": teacher_output_B_C_T_H_W.detach().cpu(),
         }
 
         kendall_loss = kendall_loss.mean()
