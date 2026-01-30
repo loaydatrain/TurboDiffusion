@@ -185,6 +185,7 @@ class EveryNDrawSample_SLA(EveryN):
         raw_data, x0, _, _ = model.get_data_and_condition(data_batch)
 
         to_show = []
+        log.info(f"[Sample Generation] Starting STUDENT sampling with {self.num_sampling_step} steps...")
         sample_student = model.generate_samples_from_batch(
             data_batch,
             # make sure no mismatch and also works for cp
@@ -193,10 +194,13 @@ class EveryNDrawSample_SLA(EveryN):
             num_steps=self.num_sampling_step,
             teacher=False,
         )
+        log.info(f"[Sample Generation] STUDENT sampling complete. Decoding...")
         if hasattr(model, "decode"):
             sample_student = model.decode(sample_student)
         to_show.append(sample_student.cpu())
+        log.info(f"[Sample Generation] STUDENT decode complete.")
 
+        log.info(f"[Sample Generation] Starting TEACHER sampling with {self.num_sampling_step} steps...")
         sample_teacher = model.generate_samples_from_batch(
             data_batch,
             # make sure no mismatch and also works for cp
@@ -205,8 +209,10 @@ class EveryNDrawSample_SLA(EveryN):
             num_steps=self.num_sampling_step,
             teacher=True,
         )
+        log.info(f"[Sample Generation] TEACHER sampling complete. Decoding...")
         if hasattr(model, "decode"):
             sample_teacher = model.decode(sample_teacher)
+        log.info(f"[Sample Generation] TEACHER decode complete.")
 
         to_show.append(sample_teacher.cpu())
 
